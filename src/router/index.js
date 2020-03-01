@@ -25,6 +25,16 @@ const routes = [
     name: '02',
     component: () => import(/* webpackChunkName: "experiment-02" */ '../views/02.vue'),
   },
+  {
+    path: '/03',
+    name: '03',
+    component: () => import(/* webpackChunkName: "experiment-03" */ '../views/03.vue'),
+  },
+  {
+    path: '/04',
+    name: '04',
+    component: () => import(/* webpackChunkName: "experiment-04" */ '../views/04.vue'),
+  },
 ];
 
 const router = new VueRouter({
