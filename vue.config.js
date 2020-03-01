@@ -14,5 +14,12 @@ module.exports = {
       .use('glslify-loader')
         .loader('glslify-loader')
         .end()
-  }      
+  },
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: `@import "~@/_scss/main.scss";`
+      }
+    }
+  }
 }

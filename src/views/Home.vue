@@ -1,7 +1,8 @@
 <template>
   <div class='nav'>
-    <router-link to='/'>Home</router-link>
     <router-link to='/default'>Default</router-link>
+    <router-link to='/01'>Mouse movement</router-link>
+    <router-link to='/02'>Blending colors</router-link>
   </div>
 </template>
 

@@ -8,14 +8,14 @@
 <script>
 import PageHeader from '@/components/PageHeader.vue';
 
-import vShader from '@/webgl/shaders/vertex/v-default.glsl';
-import fShader from '@/webgl/shaders/fragment/f-default.glsl';
+import vShader from '../webgl/shaders/vertex/v-02.glsl';
+import fShader from '../webgl/shaders/fragment/f-02.glsl';
 
 const THREE = require('three');
 const { gsap } = require('gsap');
 
 export default {
-  name: 'Default',
+  name: 'experiment-02',
 
   components: {
     PageHeader,
@@ -25,8 +25,12 @@ export default {
     scene: new THREE.Scene(),
     camera: new THREE.OrthographicCamera(1, -1, 1, -1, 0.1, 10),
     renderer: null,
+    clock: new THREE.Clock(),
     uniforms: {
-      u_color: { value: new THREE.Color(0xbb27ff) },
+      u_color: { value: new THREE.Color(0x00ff00) },
+      u_time: { value: 0.0 },
+      u_mouse: { value: { x: 0.0, y: 0.0 } },
+      u_resolution: { value: { x: 0.0, y: 0.0 } },
     },
   }),
 
@@ -48,7 +52,7 @@ export default {
   mounted() {
     this.renderer = new THREE.WebGLRenderer({ canvas: this.$refs.canvas });
     this.camera.position.z = 1;
-    this.renderer.setClearColor(0x2368ff, 1);
+    this.renderer.setClearColor(0xadd8e6, 1);
 
     this.setSizes();
     this.createPlane();
@@ -58,7 +62,8 @@ export default {
 
   methods: {
     setUpEventListeners() {
-      this.createTicker();
+      this.tickHandler();
+      this.mousemoveHandler();
     },
 
     /*
@@ -72,6 +77,14 @@ export default {
 
       this.$refs.canvas.width = innerWidth;
       this.$refs.canvas.height = innerHeight;
+
+      this.uniforms.u_resolution.value.x = innerWidth;
+      this.uniforms.u_resolution.value.y = innerHeight;
+    },
+
+    changeMousePosition(e) {
+      this.uniforms.u_mouse.value.x = e.clientX;
+      this.uniforms.u_mouse.value.y = e.clientY;
     },
 
     createPlane() {
@@ -84,28 +97,31 @@ export default {
         side: THREE.DoubleSide,
       });
 
-      this.$data.plane = new THREE.Mesh(geometry, material);
+      const plane = new THREE.Mesh(geometry, material);
 
-      this.scene.add(this.$data.plane);
-    },
-
-    planeRotation() {
-      this.$data.plane.rotation.x += 0.01;
-      this.$data.plane.rotation.y += 0.01;
+      this.scene.add(plane);
     },
 
     render() {
       this.renderer.render(this.scene, this.camera);
 
-      this.planeRotation();
+      this.uniforms.u_time.value = this.clock.getElapsedTime();
     },
 
     /*
       Listeners
     */
-    createTicker() {
+    tickHandler() {
       gsap.ticker.add(this.render);
     },
+
+    mousemoveHandler() {
+      window.addEventListener('mousemove', this.changeMousePosition);
+    },
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('mousemove', this.changeMousePosition);
   },
 };
 </script>
