@@ -21,5 +21,8 @@ module.exports = {
         prependData: `@import "~@/_scss/main.scss";`
       }
     }
-  }
+  },
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/shader-tests/'
+    : '/'
 }
