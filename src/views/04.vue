@@ -9,12 +9,12 @@
 import PageHeader from '@/components/PageHeader.vue';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Stats from 'stats.js/build/stats.min';
 import vShader from '../webgl/shaders/vertex/v-04.glsl';
 import fShader from '../webgl/shaders/fragment/f-04.glsl';
 
 const THREE = require('three');
 const { gsap } = require('gsap');
-
 
 export default {
   name: 'experiment-04',
@@ -25,10 +25,14 @@ export default {
 
   data: () => ({
     scene: new THREE.Scene(),
+    stats: new Stats(),
+    clock: new THREE.Clock(),
     camera: null,
     renderer: null,
     controls: null,
-    clock: new THREE.Clock(),
+    sphereAmount: 5,
+    sphereArray: [],
+    angle: 0,
     uniforms: {
       u_time: { value: 0.0 },
       u_resolution: { value: { x: 0.0, y: 0.0 } },
@@ -51,6 +55,8 @@ export default {
   },
 
   mounted() {
+    this.showStats();
+
     this.setRenderer();
     this.setSizes();
     this.createSpheres();
@@ -107,10 +113,7 @@ export default {
     },
 
     createSpheres() {
-      const sphereAmount = 5;
-      this.$data.sphereArray = [];
-
-      for (let i = 0; i < sphereAmount; i++) {
+      for (let i = 0; i < this.sphereAmount; i++) {
         const geometry = new THREE.SphereGeometry(10, 30, 30);
 
         const material = new THREE.ShaderMaterial({
@@ -124,22 +127,36 @@ export default {
         sphere.position.y = -50 + (i * 25);
         this.scene.add(sphere);
 
-        this.$data.sphereArray.push(sphere);
+        this.sphereArray.push(sphere);
       }
     },
 
     render() {
+      this.stats.begin();
+
       this.controls.update();
       this.uniforms.u_time.value = this.clock.getElapsedTime();
 
-      for (let i = 0; i < this.$data.sphereArray.length; i++) {
-        const sphere = this.$data.sphereArray[i];
+      this.camera.rotation.z = (this.angle * Math.PI) / 180;
+
+      this.angle += 1.5;
+
+      for (let i = 0; i < this.sphereArray.length; i++) {
+        const sphere = this.sphereArray[i];
 
         sphere.rotation.x += (i + 1) / 100;
         sphere.rotation.y += (i + 1) / 100;
         sphere.position.x = Math.cos(this.uniforms.u_time.value / (i + 1 * 0.5)) * 20;
       }
+
       this.renderer.render(this.scene, this.camera);
+
+      this.stats.end();
+    },
+
+    showStats() {
+      this.stats.showPanel(0);
+      document.body.appendChild(this.stats.dom);
     },
     /*
       Listeners

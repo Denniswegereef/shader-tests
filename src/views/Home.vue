@@ -4,7 +4,7 @@
     <router-link to='/01'>Mouse movement</router-link>
     <router-link to='/02'>Mouse blending colors</router-link>
     <router-link to='/03'>Blending colors</router-link>
-    <router-link to='/04'>Exploding sphere</router-link>
+    <router-link to='/04'>Moving spheres</router-link>
   </div>
 </template>
 
