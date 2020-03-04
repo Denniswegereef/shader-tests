@@ -146,6 +146,7 @@ export default {
 
     update() {
       // ANIMATION
+      // END ANIMATION
     },
 
     render() {
