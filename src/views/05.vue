@@ -57,6 +57,9 @@ export default {
   },
 
   mounted() {
+    // Misc
+    if (this.debug) this.showStats();
+
     // Renders
     this.setRenderer();
     this.setSizes();
@@ -67,10 +70,7 @@ export default {
 
     this.setUpEventListeners();
 
-    // Misc
-    if (!this.debug) return;
-    this.showStats();
-    this.showGUI();
+    if (this.debug) this.showGUI();
   },
 
   methods: {
@@ -162,13 +162,13 @@ export default {
     showStats() {
       this.$data.stats = new Stats();
       this.$data.stats.showPanel(0);
-      document.body.appendChild(this.$data.stats.dom);
+      document.body.appendChild(this.$data.stats.dom).id = 'stats';
     },
 
     showGUI() {
-      const gui = new dat.GUI({ autoPlace: true });
+      this.$data.gui = new dat.GUI({ autoPlace: true });
 
-      const cubeFolder = gui.addFolder('Cube');
+      const cubeFolder = this.$data.gui.addFolder('Cube');
 
       cubeFolder.add(this.$data.cube.position, 'x', 5, 15) //
         .name('Position')
@@ -191,6 +191,13 @@ export default {
     tickHandler() {
       gsap.ticker.add(this.render);
     },
+  },
+
+  beforeDestroy() {
+    gsap.ticker.remove(this.render);
+
+    if (this.debug) document.querySelector('#stats').remove();
+    if (this.$data.gui) this.$data.gui.destroy();
   },
 };
 </script>
