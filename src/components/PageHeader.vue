@@ -16,8 +16,8 @@ export default {
 <style lang="scss" scoped>
 .header {
   position: fixed;
-  top: 0.2rem;
-  right: 0.2rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
   z-index: 2;
   overflow: hidden;
 
