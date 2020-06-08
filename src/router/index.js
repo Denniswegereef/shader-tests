@@ -40,6 +40,11 @@ const routes = [
     name: '05',
     component: () => import(/* webpackChunkName: "experiment-05" */ '../views/05.vue'),
   },
+  {
+    path: '/canvas-01',
+    name: '01',
+    component: () => import(/* webpackChunkName: "canvas-05" */ '../views/canvas/01.vue'),
+  },
 ];
 
 const router = new VueRouter({

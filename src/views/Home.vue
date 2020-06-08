@@ -1,7 +1,14 @@
 <template>
   <div class='home'>
     <ul class="home__list">
+      <h2 class="home__header">ThreeJS / OpenGL</h2>
       <li v-for="item in routes" :key="item.path" class="home__item">
+        <router-link :to='item.path' class="home__link">{{ item.name }}</router-link>
+      </li>
+    </ul>
+    <ul class="home__list">
+      <h2 class="home__header">Canvas</h2>
+      <li v-for="item in canvasRoutes" :key="item.path" class="home__item">
         <router-link :to='item.path' class="home__link">{{ item.name }}</router-link>
       </li>
     </ul>
@@ -38,11 +45,22 @@ export default {
         path: '/05',
       },
     ],
+    canvasRoutes: [
+      {
+        name: 'Arrow pointer',
+        path: '/canvas-01',
+      },
+    ],
   }),
 };
 </script>
 
 <style lang="scss" scoped>
+.home {
+  display: flex;
+  justify-content: center;
+}
+
 .home__list {
   display: flex;
   flex-direction: column;
