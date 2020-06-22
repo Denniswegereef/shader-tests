@@ -31,11 +31,25 @@ export default {
     camera: null,
     renderer: null,
     controls: null,
+    sun: {
+      scale: 0.2,
+    },
+    mouse: {
+      oldX: 0,
+      oldY: 0,
+      newX: 0,
+      newY: 0,
+    },
     uniforms: {
       u_color: { value: new THREE.Color(0xFFDFD3) },
       u_time: { value: 0.0 },
+      u_scale: { value: 0.3 },
+      u_grow: { value: -0.5 },
       u_mouse: { value: { x: 0.0, y: 0.0 } },
       u_resolution: { value: { x: 0.0, y: 0.0 } },
+      u_colors: { value: { r: 1.0, g: 0.8, b: 0.6 } },
+      u_intensity: { value: 0.7 },
+      u_bounce: { value: 0.3 },
     },
   }),
 
@@ -124,13 +138,20 @@ export default {
     changeMousePosition(e) {
       const { innerWidth, innerHeight } = this.$store.getters.dimensions;
 
-      this.uniforms.u_mouse.value.x = ((e.clientX / innerWidth) * 2) - 1;
-      this.uniforms.u_mouse.value.y = ((e.clientY / innerHeight) * 2) - 1;
+      this.$data.mouse.newX = ((e.clientX / innerWidth) * 2) - 1;
+      this.$data.mouse.newY = ((e.clientY / innerHeight) * 2) - 1;
+    },
 
-      console.log(`x:${this.uniforms.u_mouse.value.x} y:${this.uniforms.u_mouse.value.y}`);
+    updateMousePosition() {
+      this.$data.mouse.oldX = this.uniforms.u_mouse.value.x;
+      this.$data.mouse.oldY = this.uniforms.u_mouse.value.y;
+
+      this.uniforms.u_mouse.value.x = this.lerp(this.$data.mouse.oldX, this.$data.mouse.newX, 0.07);
+      this.uniforms.u_mouse.value.y = this.lerp(this.$data.mouse.oldY, this.$data.mouse.newY, 0.07);
     },
 
     update() {
+      this.updateMousePosition();
       // ANIMATION
       // END ANIMATION
     },
@@ -156,9 +177,37 @@ export default {
     showGUI() {
       this.$data.gui = new dat.GUI({ autoPlace: true });
 
-      const cubeFolder = this.$data.gui.addFolder('Cube');
+      const sunFolder = this.$data.gui.addFolder('Sun');
 
-      cubeFolder.open();
+      sunFolder.add(this.$data.uniforms.u_scale, 'value', 0.01, 5) //
+        .name('Scale')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_colors.value, 'r', 0.0, 1.0) //
+        .name('Red')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_colors.value, 'g', 0.0, 1.0) //
+        .name('Red')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_colors.value, 'b', 0.0, 1.0) //
+        .name('Green')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_grow, 'value', -1.0, 1.0) //
+        .name('Grow')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_intensity, 'value', -3.0, 3.0) //
+        .name('Intensity')
+        .onChange(this.render());
+
+      sunFolder.add(this.$data.uniforms.u_bounce, 'value', -5.0, 5.0) //
+        .name('Bounce')
+        .onChange(this.render());
+
+      sunFolder.open();
     },
 
     /*
@@ -170,6 +219,13 @@ export default {
 
     mousemoveHandler() {
       window.addEventListener('mousemove', this.changeMousePosition);
+    },
+
+    /*
+      Helpers
+    */
+    lerp(start, end, amt) {
+      return (1 - amt) * start + amt * end;
     },
   },
 
