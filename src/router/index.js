@@ -4,6 +4,37 @@ import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
 
+// const amount = 5;
+
+// const array = Array.from(Array(amount).keys());
+
+// const testRoutes = {
+//   ...array.map((item) => ({
+//     path: `/0${item}`,
+//     name: `0${item}`,
+//     // eslint-disable-next-line prefer-template
+//     component: import(/* webpackChunkName:
+// "[request]" */ '../views/0' + (item + 1) + '.vue'), /* eslint no-useless-concat: "error" */
+//   })),
+// };
+
+// const routesAC = [
+//   {
+//     path: '/',
+//     name: 'Home',
+//     component: Home,
+//   },
+//   {
+//     path: '/default',
+//     name: 'default',
+//     component: () => import(/* webpackChunkName: "default" */ '../views/_default.vue'),
+//   },
+// ];
+
+// const object3 = { ...routesAC, ...testRoutes };
+
+// console.log(object3);
+
 const routes = [
   {
     path: '/',
@@ -41,11 +72,19 @@ const routes = [
     component: () => import(/* webpackChunkName: "experiment-05" */ '../views/05.vue'),
   },
   {
+    path: '/06',
+    name: '06',
+    component: () => import(/* webpackChunkName: "experiment-06" */ '../views/06.vue'),
+  },
+  {
     path: '/canvas-01',
     name: '01',
-    component: () => import(/* webpackChunkName: "canvas-05" */ '../views/canvas/01.vue'),
+    component: () => import(/* webpackChunkName: "canvas-01" */ '../views/canvas/01.vue'),
   },
 ];
+
+// console.log(testRoutes);
+// console.log(routes);
 
 const router = new VueRouter({
   mode: 'history',

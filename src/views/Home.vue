@@ -44,6 +44,10 @@ export default {
         name: 'Displacement sphere',
         path: '/05',
       },
+      {
+        name: 'Sun',
+        path: '/06',
+      },
     ],
     canvasRoutes: [
       {
