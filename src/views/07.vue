@@ -8,20 +8,17 @@
 <script>
 import PageHeader from '@/components/PageHeader.vue';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'stats.js/build/stats.min';
-import vShader from '../webgl/shaders/vertex/v-05.glsl';
-import fShader from '../webgl/shaders/fragment/f-05.glsl';
 
-import vDefault from '../webgl/shaders/vertex/v-default.glsl';
-import fDefault from '../webgl/shaders/fragment/f-default.glsl';
+import vShader from '../webgl/shaders/vertex/v-07.glsl';
+import fShader from '../webgl/shaders/fragment/f-07.glsl';
 
 const THREE = require('three');
 const { gsap } = require('gsap');
 const dat = require('dat.gui');
 
 export default {
-  name: 'experiment-04',
+  name: 'experiment-07',
 
   components: {
     PageHeader,
@@ -35,7 +32,6 @@ export default {
     renderer: null,
     controls: null,
     uniforms: {
-      u_color: { value: new THREE.Color(0xFFDFD3) },
       u_time: { value: 0.0 },
       u_resolution: { value: { x: 0.0, y: 0.0 } },
     },
@@ -65,8 +61,7 @@ export default {
     this.setSizes();
 
     // Objects
-    this.createSphere();
-    this.createBox();
+    this.createPlane();
 
     this.setUpEventListeners();
 
@@ -88,15 +83,7 @@ export default {
       this.renderer.setClearColor(0x333333, 1);
 
       this.camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 1000);
-      this.camera.position.set(10, 20, 50);
-
-      this.controls = new OrbitControls(this.camera, this.$refs.canvas);
-      this.controls.enablePan = false;
-      this.controls.enableZoom = false;
-      this.controls.enableDamping = true;
-      this.controls.dampingFactor = 0.08;
-      this.controls.rotateSpeed = 0.20;
-      this.controls.update();
+      this.camera.position.z = 1;
     },
 
     setSizes() {
@@ -115,36 +102,23 @@ export default {
       this.camera.updateProjectionMatrix();
     },
 
-    createSphere() {
-      const geometry = new THREE.SphereGeometry(5, 32, 32);
+    createPlane() {
+      const geometry = new THREE.PlaneGeometry(2, 2);
 
       const material = new THREE.ShaderMaterial({
         uniforms: this.uniforms,
         vertexShader: vShader,
         fragmentShader: fShader,
+        side: THREE.DoubleSide,
       });
 
-      this.$data.sphere = new THREE.Mesh(geometry, material);
-      this.scene.add(this.$data.sphere);
-    },
+      const plane = new THREE.Mesh(geometry, material);
 
-    createBox() {
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-
-      const material = new THREE.ShaderMaterial({
-        uniforms: this.uniforms,
-        vertexShader: vDefault,
-        fragmentShader: fDefault,
-      });
-
-      this.$data.cube = new THREE.Mesh(geometry, material);
-
-      this.$data.cube.position.x = 10;
-
-      this.scene.add(this.$data.cube);
+      this.scene.add(plane);
     },
 
     update() {
+      // this.updateMousePosition();
       // ANIMATION
       // END ANIMATION
     },
@@ -153,9 +127,10 @@ export default {
       if (this.debug) this.$data.stats.begin();
 
       this.uniforms.u_time.value = this.clock.getElapsedTime();
+
       this.update();
+
       this.renderer.render(this.scene, this.camera);
-      this.controls.update();
 
       if (this.debug) this.$data.stats.end();
     },
@@ -169,21 +144,9 @@ export default {
     showGUI() {
       this.$data.gui = new dat.GUI({ autoPlace: true });
 
-      const cubeFolder = this.$data.gui.addFolder('Cube');
+      const folder = this.$data.gui.addFolder('GUI');
 
-      cubeFolder.add(this.$data.cube.position, 'x', 5, 15) //
-        .name('Position')
-        .onChange(this.render());
-
-      cubeFolder.add(this.$data.cube.scale, 'x', 1, 50) //
-        .name('Scale')
-        .onChange(this.render());
-
-      cubeFolder.add(this.$data.cube.scale, 'y', 1, 50) //
-        .name('Scale')
-        .onChange(this.render());
-
-      cubeFolder.open();
+      folder.open();
     },
 
     /*
@@ -192,10 +155,18 @@ export default {
     tickHandler() {
       gsap.ticker.add(this.render);
     },
+
+    /*
+      Helpers
+    */
+    lerp(start, end, amt) {
+      return (1 - amt) * start + amt * end;
+    },
   },
 
   beforeDestroy() {
     gsap.ticker.remove(this.render);
+    window.removeEventListener('mousemove', this.changeMousePosition);
 
     if (this.debug) document.querySelector('#stats').remove();
     if (this.$data.gui) this.$data.gui.destroy();
