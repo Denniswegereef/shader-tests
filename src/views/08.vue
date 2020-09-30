@@ -8,16 +8,17 @@
 <script>
 import PageHeader from '@/components/PageHeader.vue';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'stats.js/build/stats.min';
-import vShader from '../webgl/shaders/vertex/v-04.glsl';
-import fShader from '../webgl/shaders/fragment/f-04.glsl';
+
+import vShader from '../webgl/shaders/vertex/v-08.glsl';
+import fShader from '../webgl/shaders/fragment/f-08.glsl';
 
 const THREE = require('three');
 const { gsap } = require('gsap');
+const dat = require('dat.gui');
 
 export default {
-  name: 'experiment-04',
+  name: 'experiment-08',
 
   components: {
     PageHeader,
@@ -25,19 +26,16 @@ export default {
 
   data: () => ({
     scene: new THREE.Scene(),
-    stats: new Stats(),
     clock: new THREE.Clock(),
+    debug: true,
     camera: null,
     renderer: null,
     controls: null,
-    sphereAmount: 5,
-    sphereArray: [],
-    angle: 0,
     uniforms: {
       u_time: { value: 0.0 },
       u_resolution: { value: { x: 0.0, y: 0.0 } },
-      u_color_a: { value: new THREE.Color(0x6f2dbd) },
-      u_color_b: { value: new THREE.Color(0xb9faf8) },
+      u_color_a: { value: new THREE.Color(0xff0000) },
+      u_color_b: { value: new THREE.Color(0xffff00) },
     },
   }),
 
@@ -57,13 +55,19 @@ export default {
   },
 
   mounted() {
-    this.showStats();
+    // Misc
+    if (this.debug) this.showStats();
 
+    // Renders
     this.setRenderer();
     this.setSizes();
-    this.createSpheres();
+
+    // Objects
+    this.createPlane();
 
     this.setUpEventListeners();
+
+    if (this.debug) this.showGUI();
   },
 
   methods: {
@@ -77,26 +81,27 @@ export default {
     setRenderer() {
       const { innerWidth, innerHeight } = this.$store.getters.dimensions;
 
-      this.renderer = new THREE.WebGLRenderer({ canvas: this.$refs.canvas, antialias: true });
+      this.renderer = new THREE.WebGLRenderer({ canvas: this.$refs.canvas });
       this.renderer.setClearColor(0x333333, 1);
 
-      this.camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 10000);
-      this.controls = new OrbitControls(this.camera, this.$refs.canvas);
-
-      this.camera.position.set(50, 20, 250);
-      this.controls.update();
+      this.camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 1000);
+      this.camera.position.z = 1;
     },
 
     setSizes() {
       const { innerWidth, innerHeight } = this.$store.getters.dimensions;
-
-      this.renderer.setSize(innerWidth, innerHeight);
 
       this.$refs.canvas.width = innerWidth;
       this.$refs.canvas.height = innerHeight;
 
       this.uniforms.u_resolution.value.x = innerWidth;
       this.uniforms.u_resolution.value.y = innerHeight;
+
+      this.renderer.setSize(innerWidth, innerHeight);
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+
+      this.camera.aspect = innerWidth / innerHeight;
+      this.camera.updateProjectionMatrix();
     },
 
     createPlane() {
@@ -114,58 +119,59 @@ export default {
       this.scene.add(plane);
     },
 
-    createSpheres() {
-      for (let i = 0; i < this.sphereAmount; i++) {
-        const geometry = new THREE.SphereGeometry(10, 30, 30);
-
-        const material = new THREE.ShaderMaterial({
-          uniforms: this.uniforms,
-          vertexShader: vShader,
-          fragmentShader: fShader,
-        });
-
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.z = 50;
-        sphere.position.y = -50 + (i * 25);
-        this.scene.add(sphere);
-
-        this.sphereArray.push(sphere);
-      }
+    update() {
+      // this.updateMousePosition();
+      // ANIMATION
+      // END ANIMATION
     },
 
     render() {
-      this.stats.begin();
+      if (this.debug) this.$data.stats.begin();
 
-      this.controls.update();
       this.uniforms.u_time.value = this.clock.getElapsedTime();
 
-      this.camera.rotation.z = (this.angle * Math.PI) / 180;
-
-      this.angle += 0.3;
-
-      for (let i = 0; i < this.sphereArray.length; i++) {
-        const sphere = this.sphereArray[i];
-
-        sphere.rotation.x += (i + 3) / (Math.random() * this.uniforms.u_time.value + 100);
-        sphere.rotation.y += (i + 2) / (Math.random() * this.uniforms.u_time.value + 100);
-        sphere.position.x = Math.cos(this.uniforms.u_time.value / (i + 1 * 0.5)) * 20;
-      }
+      this.update();
 
       this.renderer.render(this.scene, this.camera);
 
-      this.stats.end();
+      if (this.debug) this.$data.stats.end();
     },
 
     showStats() {
-      this.stats.showPanel(0);
-      document.body.appendChild(this.stats.dom);
+      this.$data.stats = new Stats();
+      this.$data.stats.showPanel(0);
+      document.body.appendChild(this.$data.stats.dom).id = 'stats';
     },
+
+    showGUI() {
+      this.$data.gui = new dat.GUI({ autoPlace: true });
+
+      const folder = this.$data.gui.addFolder('GUI');
+
+      folder.open();
+    },
+
     /*
       Listeners
     */
     tickHandler() {
       gsap.ticker.add(this.render);
     },
+
+    /*
+      Helpers
+    */
+    lerp(start, end, amt) {
+      return (1 - amt) * start + amt * end;
+    },
+  },
+
+  beforeDestroy() {
+    gsap.ticker.remove(this.render);
+    window.removeEventListener('mousemove', this.changeMousePosition);
+
+    if (this.debug) document.querySelector('#stats').remove();
+    if (this.$data.gui) this.$data.gui.destroy();
   },
 };
 </script>

@@ -37,14 +37,14 @@ float noise (vec2 st) {
 void main() {
     // Scale the coordinate system to see
     // some noise in action
-    vec2 pos = vec2(v_uv.x * 1.4 + 0.01, v_uv.y - u_time * 0.25);
+    vec2 pos = vec2(v_uv.x * 1.4 + 0.01, v_uv.y - u_time * 0.69);
 
     // Use the noise function
-    float n = noise(pos * 2.0);
-    pos = vec2(v_uv.x * 75.0, v_uv.y * 2.0 - u_time * 0.25);
+    float n = noise(pos * 12.0);
+    pos = vec2(v_uv.x * u_time * 0.12 + 20.0, v_uv.y * 2.0 - u_time * 0.12);
 
-    n += noise(pos * 4.0);
-    pos = vec2(v_uv.x * 75.0, v_uv.y * 3.0 - u_time * 0.25);
+    n += noise(pos * 8.0);
+    pos = vec2(v_uv.x * u_time * 0.61 + 20.0, v_uv.y * 3.0 - u_time * 0.61);
 
     n += noise(pos * 9.0);
     n /= 3.0;

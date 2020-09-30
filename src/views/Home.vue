@@ -52,6 +52,10 @@ export default {
         name: 'Submarine screen',
         path: '/07',
       },
+      {
+        name: 'Fire',
+        path: '/08',
+      },
     ],
     canvasRoutes: [
       {
