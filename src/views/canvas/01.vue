@@ -73,13 +73,9 @@ export default {
 
       this.$data.arrowX = innerWidth / 2;
       this.$data.arrowY = innerHeight / 2;
-
-      console.log(this.$data.arrowY);
     },
 
     update() {
-      console.log('Update');
-
       const { innerWidth, innerHeight } = this.$store.getters.dimensions;
 
       // Create gradient

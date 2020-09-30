@@ -120,7 +120,6 @@ export default {
     },
 
     createPlane() {
-      console.log('create');
       const geometry = new THREE.PlaneGeometry(2, 2);
 
       const material = new THREE.ShaderMaterial({
