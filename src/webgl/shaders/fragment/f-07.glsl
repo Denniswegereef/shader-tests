@@ -64,7 +64,7 @@ void main (void)
   color += sweep(v_uv, vec2(0.5), 0.128, 0.003, 0.001) * vec3(0.1, 0.3, 1.0);
 
   color += polygon(v_uv, vec2(0.7 - sin(u_time * 3.0 + PI) * 0.05, 0.5), 0.005, 3, 0.0, 0.001) * vec3(1.0);
-  color += polygon(v_uv, vec2(0.3 - sin(u_time * 3.0) * 0.05, 0.5), 0.005, 3, PI, 0.001) * vec3(1.0);
+  color += polygon(v_uv, vec2(0.3 - cos(u_time * 3.0) * 0.05, 0.5), 0.005, 3, PI, 0.001) * vec3(1.0);
 
   gl_FragColor = vec4(color, 1.0);
 }

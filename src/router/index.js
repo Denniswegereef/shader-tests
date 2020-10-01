@@ -79,12 +79,22 @@ const routes = [
   {
     path: '/07',
     name: '07',
-    component: () => import(/* webpackChunkName: "experiment-06" */ '../views/07.vue'),
+    component: () => import(/* webpackChunkName: "experiment-07 */ '../views/07.vue'),
   },
   {
     path: '/08',
     name: '08',
-    component: () => import(/* webpackChunkName: "experiment-06" */ '../views/08.vue'),
+    component: () => import(/* webpackChunkName: "experiment-08" */ '../views/08.vue'),
+  },
+  {
+    path: '/09',
+    name: '09',
+    component: () => import(/* webpackChunkName: "experiment-09" */ '../views/09.vue'),
+  },
+  {
+    path: '/10',
+    name: '10',
+    component: () => import(/* webpackChunkName: "experiment-10" */ '../views/10.vue'),
   },
   {
     path: '/canvas-01',

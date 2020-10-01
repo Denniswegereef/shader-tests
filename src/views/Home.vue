@@ -56,6 +56,14 @@ export default {
         name: 'Fire',
         path: '/08',
       },
+      {
+        name: 'Texture - rotating',
+        path: '/09',
+      },
+      {
+        name: 'Texture - ripple',
+        path: '/10',
+      },
     ],
     canvasRoutes: [
       {
