@@ -1,5 +1,1 @@
-function randomRange(min, max) {
-  return min + Math.random() * (max, - min);
-}
-
-export default randomRange
+export default (min, max) => min + Math.random() * (max - min);

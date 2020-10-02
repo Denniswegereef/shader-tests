@@ -18,6 +18,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "global-require": 0,
-    "import/no-unresolved": [2, { caseSensitive: false }]
+    "import/no-unresolved": [2, { caseSensitive: false }],
+    'max-len': ["error", { "code": 150 }],
   },
 };
