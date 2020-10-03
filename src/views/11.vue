@@ -143,6 +143,8 @@ export default {
         side: THREE.DoubleSide,
       });
 
+      this.uniforms.u_time.value = this.uniforms.u_duration.value;
+
       const plane = new THREE.Mesh(geometry, material);
 
       this.scene.add(plane);
@@ -155,6 +157,7 @@ export default {
 
       gsap.to(time, {
         duration: this.uniforms.u_duration.value,
+        ease: 'circ.out',
         value: this.uniforms.u_duration.value,
         onUpdate: () => { this.uniforms.u_time.value = time.value; },
       });
@@ -175,6 +178,7 @@ export default {
 
       gsap.to(time, {
         duration: this.uniforms.u_duration.value,
+        ease: 'circ.out',
         value: this.uniforms.u_duration.value,
         onUpdate: () => { this.uniforms.u_time.value = time.value; },
       });
