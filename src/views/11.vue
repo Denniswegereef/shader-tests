@@ -37,6 +37,7 @@ export default {
     slider: {
       index: 0,
       images: [],
+      loadedTextures: [],
       aspectRatio: {
         width: 130,
         height: 87,
@@ -44,13 +45,13 @@ export default {
       scaleRatioPercent: 190,
     },
     uniforms: {
-      u_duration: { value: 8.0 },
       u_tex_1: { value: '' },
       u_tex_2: { value: '' },
       u_time: { value: 0.0 },
       u_resolution: { value: { x: 0.0, y: 0.0 } },
       u_color_a: { value: new THREE.Color(0xff0000) },
       u_color_b: { value: new THREE.Color(0xffff00) },
+      u_duration: { value: 2.0 },
     },
   }),
 
@@ -122,7 +123,7 @@ export default {
     createPlane() {
       const ratio = this.slider.scaleRatioPercent;
       const geometry = new THREE.PlaneGeometry(this.slider.aspectRatio.width / ratio, this.slider.aspectRatio.height / ratio);
-      // const textureLoader = new THREE.TextureLoader();
+      const textureLoader = new THREE.TextureLoader();
 
       this.slider.images = [
         require('@/assets/texture_two.png'),
@@ -130,13 +131,10 @@ export default {
         require('@/assets/texture_four.png'),
       ];
 
-      console.log(this.slider.images);
+      this.slider.loadedTextures = this.slider.images.map((image) => textureLoader.load(image));
 
-      // const loadTexture = textureLoader.load(path);
-
-      // this.$data.uniforms.u_tex.value = loadTexture;
-
-      // const texture = this.$data.textureLoader;
+      this.uniforms.u_tex_1.value = this.slider.loadedTextures[0];
+      this.uniforms.u_tex_2.value = this.slider.loadedTextures[1];
 
       const material = new THREE.ShaderMaterial({
         uniforms: this.uniforms,
@@ -151,43 +149,52 @@ export default {
     },
 
     sliderBack() {
+      this.uniforms.u_time.value = 0.0;
+
+      const time = { value: 0 };
+
+      gsap.to(time, {
+        duration: this.uniforms.u_duration.value,
+        value: this.uniforms.u_duration.value,
+        onUpdate: () => { this.uniforms.u_time.value = time.value; },
+      });
+
       this.slider.index -= 1;
       const { length } = this.slider.images;
 
       if (this.slider.index <= -1) this.slider.index = length - 1;
 
-      this.uniforms.u_tex_1 = this.slider.images[mod(this.slider.index - 1, length)];
-      this.uniforms.u_tex_2 = this.slider.images[this.slider.index];
+      this.uniforms.u_tex_1.value = this.slider.loadedTextures[mod(this.slider.index - 1, length)];
+      this.uniforms.u_tex_2.value = this.slider.loadedTextures[this.slider.index];
     },
 
     sliderForward() {
+      this.uniforms.u_time.value = 0.0;
+
+      const time = { value: 0 };
+
+      gsap.to(time, {
+        duration: this.uniforms.u_duration.value,
+        value: this.uniforms.u_duration.value,
+        onUpdate: () => { this.uniforms.u_time.value = time.value; },
+      });
+
       this.slider.index += 1;
       const { length } = this.slider.images;
 
       if (this.slider.index === this.slider.images.length) this.slider.index = 0;
 
-      this.uniforms.u_tex_1 = this.slider.images[this.slider.index];
-      this.uniforms.u_tex_2 = this.slider.images[mod(this.slider.index + 1, length)];
-    },
-
-    updateSliderIndex() {
-      console.log(this.uniforms.u_tex_1);
-      console.log(this.uniforms.u_tex_2);
-
-      console.log(this.slider.index);
-      console.log('------');
+      this.uniforms.u_tex_1.value = this.slider.loadedTextures[this.slider.index];
+      this.uniforms.u_tex_2.value = this.slider.loadedTextures[mod(this.slider.index + 1, length)];
     },
 
     update() {
-      // this.updateMousePosition();
       // ANIMATION
       // END ANIMATION
     },
 
     render() {
       if (this.debug) this.$data.stats.begin();
-
-      this.uniforms.u_time.value = this.clock.getElapsedTime();
 
       this.update();
 
@@ -219,12 +226,10 @@ export default {
 
     buttonBackHandler() {
       this.sliderBack();
-      this.updateSliderIndex();
     },
 
     buttonForwardHandler() {
       this.sliderForward();
-      this.updateSliderIndex();
     },
 
     /*

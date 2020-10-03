@@ -1,35 +1,23 @@
 #define PI 3.141592653589
+#define PI2 6.28318530718
 
-varying vec2 v_uv;
-varying vec3 v_position;
+uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_duration;
+uniform sampler2D u_tex_1;
+uniform sampler2D u_tex_2;
 
-uniform sampler2D u_tex;
-
-vec2 rotate(vec2 pt, float theta, float aspect) {
-  float c = cos(theta);
-  float s = sin(theta);
-  mat2 mat = mat2(c, s, -s, c);
-  pt.y /= aspect;
-  pt = mat * pt;
-  pt.y *= aspect;
-  return pt;
-}
-
-float inRect(vec2 pt, vec2 bottomLeft, vec2 topRight) {
-  vec2 s = step(bottomLeft, pt) - step(topRight, pt);
-  return s.x * s.y;
-}
+varying vec2 v_uv;
 
 void main (void) {
-  vec2 p = v_position.xy;
+  vec2 p = -1.0 + 2.0 * v_uv;
   float len = length(p);
-  vec2 ripple = v_uv + p / len * 0.03 * cos(len * 12.0 - u_time * 9.0);
-  float delta = (sin(mod(u_time, u_duration) * (2.0 * PI / u_duration)) + 1.0) / 2.0;
+  vec2 ripple = v_uv + (p / len) * cos(len * 12.0 - u_time * 4.0) * 0.03;
+  float delta = u_time / u_duration;
   vec2 uv = mix(ripple, v_uv, delta);
-  vec3 color = texture2D(u_tex, uv).rgb;
-
+  vec3 col1 = texture2D(u_tex_1, uv).rgb;
+  vec3 col2 = texture2D(u_tex_2, uv).rgb;
+  float fade = smoothstep(delta * 1.4, delta * 3.5, len);
+  vec3 color = mix(col2, col1, fade);
   gl_FragColor = vec4(color, 1.0);
-  // gl_FragColor = vec4(color.r, color.g * cos(u_time * 0.3) + 1.0, color.b * sin(u_time * 0.5) + 1.0 * 0.5, 1.0);
 }

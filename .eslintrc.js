@@ -20,5 +20,9 @@ module.exports = {
     "global-require": 0,
     "import/no-unresolved": [2, { caseSensitive: false }],
     'max-len': ["error", { "code": 150 }],
+    "prefer-destructuring": ["error", {
+      "array": false,
+      "object": true
+    }],
   },
 };
