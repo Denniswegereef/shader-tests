@@ -102,6 +102,16 @@ const routes = [
     component: () => import(/* webpackChunkName: "experiment-11" */ '../views/11.vue'),
   },
   {
+    path: '/12',
+    name: '12',
+    component: () => import(/* webpackChunkName: "experiment-12" */ '../views/12.vue'),
+  },
+  {
+    path: '/13',
+    name: '13',
+    component: () => import(/* webpackChunkName: "experiment-13" */ '../views/13.vue'),
+  },
+  {
     path: '/canvas-01',
     name: 'c-01',
     component: () => import(/* webpackChunkName: "canvas-01" */ '../views/canvas/01.vue'),

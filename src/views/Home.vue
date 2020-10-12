@@ -64,9 +64,17 @@ export default {
         name: 'Texture - ripple',
         path: '/10',
       },
-            {
+      {
         name: 'Texture - ripple transistion',
         path: '/11',
+      },
+      {
+        name: 'Box to sphere transistion',
+        path: '/12',
+      },
+      {
+        name: 'Explosion',
+        path: '/13',
       },
     ],
     canvasRoutes: [
