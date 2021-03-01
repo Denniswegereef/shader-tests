@@ -14,7 +14,7 @@
     "gsap": "^3.5.1",
     "lodash.debounce": "^4.0.8",
     "stats.js": "^0.17.0",
-    "three": "^0.113.2",
+    "three": "^0.125.0",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.2",
     "vue-router": "^3.4.5",
